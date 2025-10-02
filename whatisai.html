@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What is AI? - Venn Diagram Game</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .game-area {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .venn-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .venn-diagram {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .circle {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px solid #333;
+            background: rgba(240, 240, 240, 0.8);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding-top: 20px;
+        }
+        
+        .circle.ai {
+            width: 480px;
+            height: 480px;
+            top: 10px;
+            left: 10px;
+            border-color: #e53e3e;
+            color: #e53e3e;
+        }
+        
+        .circle.ml {
+            width: 360px;
+            height: 360px;
+            top: 70px;
+            left: 70px;
+            border-color: #3182ce;
+            color: #3182ce;
+        }
+        
+        .circle.dl {
+            width: 240px;
+            height: 240px;
+            top: 130px;
+            left: 130px;
+            border-color: #38a169;
+            color: #38a169;
+        }
+        
+        .circle.genai {
+            width: 120px;
+            height: 120px;
+            top: 190px;
+            left: 190px;
+            border-color: #d69e2e;
+            color: #d69e2e;
+        }
+        
+        .labels-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .label {
+            padding: 12px 24px;
+            background: #4299e1;
+            color: white;
+            border-radius: 25px;
+            cursor: grab;
+            user-select: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+        
+        .label.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .label.placed {
+            background: #48bb78;
+        }
+        
+        .drop-zone.drag-over {
+            background: rgba(66, 153, 225, 0.2) !important;
+            transform: scale(1.05);
+        }
+        
+        .label-placeholder {
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: #4a5568;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            min-width: 40px;
+            text-align: center;
+            border: 2px solid #e2e8f0;
+            font-size: 16px;
+            pointer-events: none;
+            cursor: grab;
+            transition: all 0.3s ease;
+        }
+        
+        .label-placeholder.filled {
+            pointer-events: auto;
+            cursor: grab;
+        }
+        
+        .label-placeholder.filled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+        
+        .label-placeholder.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+        
+        .label-placeholder.filled {
+            background: #48bb78;
+            color: white;
+            border-color: #48bb78;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        .btn-reset {
+            background: #e53e3e;
+            color: white;
+        }
+        
+        .btn-reset:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+        }
+        
+        .btn-check {
+            background: #38a169;
+            color: white;
+        }
+        
+        .btn-check:hover {
+            background: #2f855a;
+            transform: translateY(-2px);
+        }
+        
+        .score {
+            text-align: center;
+            font-size: 1.2em;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        
+        .correct {
+            color: #38a169;
+        }
+        
+        .incorrect {
+            color: #e53e3e;
+        }
+        
+        @media (max-width: 768px) {
+            .venn-container {
+                width: 350px;
+                height: 350px;
+            }
+            
+            .circle.ai {
+                width: 330px;
+                height: 330px;
+                top: 10px;
+                left: 10px;
+            }
+            
+            .circle.ml {
+                width: 250px;
+                height: 250px;
+                top: 50px;
+                left: 50px;
+            }
+            
+            .circle.dl {
+                width: 170px;
+                height: 170px;
+                top: 90px;
+                left: 90px;
+            }
+            
+            .circle.genai {
+                width: 90px;
+                height: 90px;
+                top: 130px;
+                left: 130px;
+            }
+            
+            .label-placeholder {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>What is AI?</h1>
+        <p class="subtitle">Drag and drop the labels to correctly identify each Venn diagram!</p>
+        
+        <div class="labels-container">
+            <div class="label" draggable="true" data-label="AI">AI (Artificial Intelligence)</div>
+            <div class="label" draggable="true" data-label="ML">ML (Machine Learning)</div>
+            <div class="label" draggable="true" data-label="DL">DL (Deep Learning)</div>
+            <div class="label" draggable="true" data-label="GenAI">GenAI (Generative AI)</div>
+        </div>
+        
+        <div class="game-area">
+            <div class="venn-container">
+                <div class="venn-diagram">
+                    <div class="circle ai drop-zone" data-correct="AI">
+                        <div class="label-placeholder">?</div>
+                    </div>
+                    <div class="circle ml drop-zone" data-correct="ML">
+                        <div class="label-placeholder">?</div>
+                    </div>
+                    <div class="circle dl drop-zone" data-correct="DL">
+                        <div class="label-placeholder">?</div>
+                    </div>
+                    <div class="circle genai drop-zone" data-correct="GenAI">
+                        <div class="label-placeholder">?</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn btn-reset" onclick="resetGame()">Reset Game</button>
+            <button class="btn btn-check" onclick="checkAnswers()">Check Answers</button>
+        </div>
+        
+        <div class="score" id="score"></div>
+    </div>
+    
+    <script>
+        let draggedElement = null;
+        let gameState = {
+            AI: null,
+            ML: null,
+            DL: null,
+            GenAI: null
+        };
+        
+        // Initialize drag and drop
+        document.addEventListener('DOMContentLoaded', function() {
+            const labels = document.querySelectorAll('.label');
+            const dropZones = document.querySelectorAll('.drop-zone');
+            
+            labels.forEach(label => {
+                label.addEventListener('dragstart', handleDragStart);
+                label.addEventListener('dragend', handleDragEnd);
+            });
+            
+            dropZones.forEach(zone => {
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('dragenter', handleDragEnter);
+                zone.addEventListener('dragleave', handleDragLeave);
+                zone.addEventListener('drop', handleDrop);
+            });
+        });
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+        
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        
+        function handleDragEnter(e) {
+            this.classList.add('drag-over');
+        }
+        
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            this.classList.remove('drag-over');
+            
+            if (draggedElement) {
+                const correctAnswer = this.dataset.correct;
+                const existingLabel = this.querySelector('.label-placeholder');
+                
+                // If dropping from original labels area
+                if (draggedElement.classList.contains('label')) {
+                    const labelType = draggedElement.dataset.label;
+                    
+                    // Remove any existing label from this circle
+                    if (existingLabel.textContent !== '?') {
+                        // Return the previous label to the labels container
+                        const prevLabelType = existingLabel.dataset.label;
+                        if (prevLabelType) {
+                            const originalLabel = document.querySelector(`[data-label="${prevLabelType}"]`);
+                            if (originalLabel) {
+                                originalLabel.style.display = 'block';
+                                originalLabel.classList.remove('placed');
+                            }
+                        }
+                    }
+                    
+                    // Update the circle label
+                    existingLabel.textContent = draggedElement.textContent;
+                    existingLabel.dataset.label = labelType;
+                    existingLabel.classList.add('filled');
+                    
+                    // Make the placeholder draggable
+                    makePlaceholderDraggable(existingLabel);
+                    
+                    // Hide the dragged element
+                    draggedElement.style.display = 'none';
+                    draggedElement.classList.add('placed');
+                    
+                    // Update game state
+                    gameState[correctAnswer] = labelType;
+                }
+                // If dropping from another placeholder
+                else if (draggedElement.classList.contains('label-placeholder') && draggedElement.classList.contains('filled')) {
+                    const draggedText = draggedElement.textContent;
+                    const draggedLabelType = draggedElement.dataset.label;
+                    const targetText = existingLabel.textContent;
+                    const targetLabelType = existingLabel.dataset.label;
+                    
+                    if (targetText === '?') {
+                        // Move to empty placeholder
+                        existingLabel.textContent = draggedText;
+                        existingLabel.dataset.label = draggedLabelType;
+                        existingLabel.classList.add('filled');
+                        makePlaceholderDraggable(existingLabel);
+                        
+                        // Clear the dragged placeholder
+                        draggedElement.textContent = '?';
+                        draggedElement.classList.remove('filled');
+                        delete draggedElement.dataset.label;
+                        draggedElement.draggable = false;
+                        
+                        // Update game state
+                        const draggedCorrectAnswer = draggedElement.parentElement.dataset.correct;
+                        gameState[draggedCorrectAnswer] = null;
+                        gameState[correctAnswer] = draggedLabelType;
+                    } else {
+                        // Swap labels
+                        existingLabel.textContent = draggedText;
+                        existingLabel.dataset.label = draggedLabelType;
+                        
+                        draggedElement.textContent = targetText;
+                        draggedElement.dataset.label = targetLabelType;
+                        
+                        // Update game state
+                        const draggedCorrectAnswer = draggedElement.parentElement.dataset.correct;
+                        gameState[draggedCorrectAnswer] = targetLabelType;
+                        gameState[correctAnswer] = draggedLabelType;
+                    }
+                }
+                
+                // Clear score when making changes
+                document.getElementById('score').innerHTML = '';
+            }
+            
+            return false;
+        }
+        
+        function makePlaceholderDraggable(placeholder) {
+            placeholder.draggable = true;
+            placeholder.addEventListener('dragstart', handlePlaceholderDragStart);
+            placeholder.addEventListener('dragend', handlePlaceholderDragEnd);
+        }
+        
+        function handlePlaceholderDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', 'placeholder-' + Math.random());
+        }
+        
+        function handlePlaceholderDragEnd(e) {
+            this.classList.remove('dragging');
+            draggedElement = null;
+        }
+        
+        function clearPlaceholder(placeholder) {
+            placeholder.textContent = '';
+            placeholder.classList.remove('filled');
+            placeholder.removeAttribute('data-original-id');
+            placeholder.draggable = false;
+            placeholder.removeEventListener('dragstart', handlePlaceholderDragStart);
+            placeholder.removeEventListener('dragend', handlePlaceholderDragEnd);
+        }
+        
+        function returnLabelToOriginal(placeholder) {
+            const originalId = placeholder.getAttribute('data-original-id');
+            if (originalId) {
+                const originalLabel = document.getElementById(originalId);
+                if (originalLabel) {
+                    originalLabel.style.display = 'block';
+                }
+            }
+            clearPlaceholder(placeholder);
+        }
+        
+        function resetGame() {
+            // Reset all labels
+            const labels = document.querySelectorAll('.label');
+            labels.forEach(label => {
+                label.style.display = 'block';
+                label.classList.remove('placed');
+            });
+            
+            // Reset all label placeholders and circle colors
+            const labelPlaceholders = document.querySelectorAll('.label-placeholder');
+            const circles = document.querySelectorAll('.circle.drop-zone');
+            
+            labelPlaceholders.forEach(label => {
+                label.textContent = '?';
+                label.classList.remove('filled');
+                delete label.dataset.label;
+                // Clear draggable functionality
+                label.draggable = false;
+                label.removeEventListener('dragstart', handlePlaceholderDragStart);
+                label.removeEventListener('dragend', handlePlaceholderDragEnd);
+                // Reset placeholder styling
+                label.style.backgroundColor = '';
+                label.style.color = '';
+                label.style.borderColor = '';
+            });
+            
+            circles.forEach(circle => {
+                // Reset circle background colors
+                circle.style.backgroundColor = '';
+            });
+            
+            // Reset game state
+            gameState = {
+                AI: null,
+                ML: null,
+                DL: null,
+                GenAI: null
+            };
+            
+            // Clear score
+            document.getElementById('score').innerHTML = '';
+        }
+        
+        function checkAnswers() {
+            let correct = 0;
+            let total = 4;
+            let results = [];
+            
+            const circles = document.querySelectorAll('.circle.drop-zone');
+            circles.forEach(circle => {
+                const correctAnswer = circle.dataset.correct;
+                const userAnswer = gameState[correctAnswer];
+                const placeholder = circle.querySelector('.label-placeholder');
+                
+                // Reset previous styling
+                circle.style.backgroundColor = '';
+                placeholder.style.backgroundColor = '';
+                placeholder.style.color = '';
+                placeholder.style.borderColor = '';
+                
+                if (userAnswer === correctAnswer) {
+                    correct++;
+                    results.push(`<span style="color: #38a169;">✓ ${correctAnswer}</span>`);
+                    // Color correct answers green
+                    circle.style.backgroundColor = 'rgba(72, 187, 120, 0.2)';
+                    placeholder.style.backgroundColor = '#48bb78';
+                    placeholder.style.color = 'white';
+                    placeholder.style.borderColor = '#48bb78';
+                } else if (userAnswer) {
+                    results.push(`<span style="color: #e53e3e;">✗ ${correctAnswer} (you placed: ${userAnswer})</span>`);
+                    // Color incorrect answers red
+                    circle.style.backgroundColor = 'rgba(229, 62, 62, 0.2)';
+                    placeholder.style.backgroundColor = '#e53e3e';
+                    placeholder.style.color = 'white';
+                    placeholder.style.borderColor = '#e53e3e';
+                } else {
+                    results.push(`<span style="color: #ed8936;">✗ ${correctAnswer} (you placed: nothing)</span>`);
+                    // Color empty answers with orange
+                    circle.style.backgroundColor = 'rgba(237, 137, 54, 0.2)';
+                    placeholder.style.backgroundColor = '#ed8936';
+                    placeholder.style.color = 'white';
+                    placeholder.style.borderColor = '#ed8936';
+                }
+            });
+            
+            const scoreElement = document.getElementById('score');
+            const percentage = Math.round((correct / total) * 100);
+            
+            let scoreClass = '';
+            let message = '';
+            
+            if (percentage === 100) {
+                scoreClass = 'correct';
+                message = '🎉 Perfect! You understand the AI hierarchy: AI contains ML, which contains DL, which contains GenAI!';
+            } else if (percentage >= 75) {
+                scoreClass = 'correct';
+                message = '👍 Great job! You\'re getting the nested relationships!';
+            } else if (percentage >= 50) {
+                scoreClass = 'incorrect';
+                message = '🤔 Good try! Remember: AI is the broadest field, then ML, then DL, then GenAI!';
+            } else {
+                scoreClass = 'incorrect';
+                message = '📚 Think about the hierarchy: AI > ML > DL > GenAI (from largest to smallest)!';
+            }
+            
+            scoreElement.innerHTML = `
+                <div class="${scoreClass}">
+                    <div>${message}</div>
+                    <div>Score: ${correct}/${total} (${percentage}%)</div>
+                    <div style="margin-top: 10px; font-size: 0.9em;">
+                        ${results.join('<br>')}
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
