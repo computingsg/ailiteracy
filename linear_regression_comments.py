@@ -1,6 +1,6 @@
 # ------------------------------------------------------------
 # SIMPLE LINEAR REGRESSION (y = a*x + b)
-# Built from first principles without external libraries
+# From first principles without external libraries
 # ------------------------------------------------------------
 
 # Function to compute the mean (average) of a list of numbers
@@ -32,8 +32,7 @@ def covariance(x, mx, y, my):
     return s
 
 
-# Function to calculate slope (a) and intercept (b)
-# using least squares formula:
+# Function to calculate slope (a) and intercept (b) using least squares formula:
 # a = covariance(x,y) / variance(x)
 # b = mean(y) - a * mean(x)
 def linear_regression_fit(x, y):
@@ -55,23 +54,20 @@ def linear_regression_predict(x, a, b):
     return preds
 
 
-# ------------------------------------------------------------
-# Example usage and demonstration
-# ------------------------------------------------------------
-if __name__ == "__main__":
-    # Sample dataset (x: independent variable, y: dependent variable)
-    X = [1, 2, 3, 4, 5]
-    Y = [2, 4, 5, 4, 5]
+# main
+# Sample dataset (x: independent variable, y: dependent variable)
+X = [1, 2, 3, 4, 5]
+Y = [2, 4, 5, 4, 5]
 
-    # Fit the regression model
-    a, b = linear_regression_fit(X, Y)
+# Fit the regression model
+a, b = linear_regression_fit(X, Y)
 
-    # Display computed coefficients
-    print("Slope (a):", a)
-    print("Intercept (b):", b)
+# Display computed coefficients
+print("Slope (a):", a)
+print("Intercept (b):", b)
 
-    # Make predictions for given x values
-    predictions = linear_regression_predict([1, 2, 3, 6], a, b)
+# Make predictions for given x values
+predictions = linear_regression_predict([1, 2, 3, 6], a, b)
 
-    # Show predicted y values
-    print("Predictions:", predictions)
+# Show predicted y values
+print("Predictions:", predictions)
